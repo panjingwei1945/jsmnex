@@ -47,6 +47,7 @@ enum jsmnexerr{
   JSMN_ERROR_NOT_FLOAT = -14,
   JSMN_ERROR_STR_SHIFT_ERROR = -15,
   JSMN_ERROR_STR_LENGTH_MISMATCH = -16,
+  JSMN_ERROR_TYPE_MISMATCH = -17,
 };
 
 enum jsmnexSearchMode{
@@ -58,17 +59,15 @@ enum jsmnexSearchMode{
 /**
  * Run Find Token by variable argument
  */
-//JSMN_API int jsmnFindToken(char * str, jsmntok_t * t, int tNum, const char * format, ...);
-JSMN_API void jsmnexInit(jsmnexInfo * jExInfo);
-JSMN_API int jsmnexParse(jsmnexInfo * jExInfo);
-JSMN_API int jsmnFindToken(jsmnexInfo * jExInfo, const char * format, ...);
-JSMN_API float jsmnexReadFloat(jsmnexInfo * jExInfo, int tokenInd, int * type);
-JSMN_API float jsmnexStr2f(char * str);
-JSMN_API int jsmnexWriteStr(jsmnexInfo * jExInfo, int ind, char * wStr, int wStrLen);
-JSMN_API int jsmnexWriteInt(jsmnexInfo * jExInfo, int ind, int val);
-JSMN_API int jsmnexWriteFloat(jsmnexInfo * jExInfo, int ind, float val);
-JSMN_API int jsmnexWriteTrue(jsmnexInfo * jExInfo, int ind);
-JSMN_API int jsmnexWriteFalse(jsmnexInfo * jExInfo, int ind);
-JSMN_API int jsmnexWriteNull(jsmnexInfo * jExInfo, int ind);
+extern int jsmnexInit(jsmnexInfo * jExInfo, char * jsStr);
+extern int jsmnFindToken(jsmnexInfo * jExInfo, const char * format, ...);
+extern float jsmnexReadFloat(jsmnexInfo * jExInfo, int tokenInd, int * type);
+extern float jsmnexStr2f(char * str);
+extern int jsmnexWriteStr(jsmnexInfo * jExInfo, int ind, char * wStr, int wStrLen);
+extern int jsmnexWriteInt(jsmnexInfo * jExInfo, int ind, int val);
+extern int jsmnexWriteFloat(jsmnexInfo * jExInfo, int ind, float val);
+extern int jsmnexWriteTrue(jsmnexInfo * jExInfo, int ind);
+extern int jsmnexWriteFalse(jsmnexInfo * jExInfo, int ind);
+extern int jsmnexWriteNull(jsmnexInfo * jExInfo, int ind);
 
 #endif /* JSMNEX_H */

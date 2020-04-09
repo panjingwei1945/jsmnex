@@ -13,18 +13,20 @@ struct {
   int findFlag;
 }jsmnexSInfo;
 
-void jsmnexInit(jsmnexInfo * jExInfo)
+int jsmnexInit(jsmnexInfo * jExInfo, char * jsStr)
 {
   jsmn_init(&(jExInfo->p));
   jExInfo->tokenSize = TOKENSIZE;
+  jExInfo->jsonStr = jsStr;
+  // modify windows UTF-8 file lable. Otherwise the file can not be parsed.
+  if(jsStr[0]=0xEF) jsStr[0]=' ';
+  if(jsStr[1]=0xBB) jsStr[1]=' ';
+  if(jsStr[2]=0xBF) jsStr[2]=' ';
   jExInfo->jsonStrLen = strlen(jExInfo->jsonStr);
-}
-
-int jsmnexParse(jsmnexInfo * jExInfo)
-{
   jExInfo->tokenNum = jsmn_parse(&(jExInfo->p), jExInfo->jsonStr, jExInfo->jsonStrLen, jExInfo->token, jExInfo->tokenSize);
   return jExInfo->tokenNum;
 }
+
 /**
   * @brief  use variable arguments to get token index.
   * @param  str : string pointer contain the json data.
@@ -35,7 +37,7 @@ int jsmnexParse(jsmnexInfo * jExInfo)
   * @retval DRESULT: > 0 indicate the index of t that contain the information of the value looking for. < 0 means something error.
   */
 //int jsmnFindToken(char * str, jsmntok_t * t, int tNum, const char * format, ...)
-int jsmnFindToken(jsmnexInfo * jExInfo, const char * format, ...)
+int jsmnexFindToken(jsmnexInfo * jExInfo, const char * format, ...)
 {
 //  jExInfo->token
 //  jExInfo->tokenNum
@@ -295,7 +297,7 @@ int strShift(char * str, int strLen, int start, int shift)
   return strLen;
 }
 
-int jsmnexWriteStr(jsmnexInfo * jExInfo, int ind, char * wStr, int wStrLen)
+int jsmnexWrite(jsmnexInfo * jExInfo, int ind, char * wStr, int wStrLen)
 {
   int shift = wStrLen + jExInfo->token[ind].start - jExInfo->token[ind].end;
   char * tmpStr = jExInfo->jsonStr;
@@ -308,41 +310,51 @@ int jsmnexWriteStr(jsmnexInfo * jExInfo, int ind, char * wStr, int wStrLen)
     if('\0' == wStr[i]) break;
     tmpStr[i + jExInfo->token[ind].start] = wStr[i];
   }
-  jsmnexInit(jExInfo);
-  jsmnexParse(jExInfo);
+  jsmnexInit(jExInfo, jExInfo->jsonStr);
   return tmpStrLen;
+}
+
+int jsmnexWriteStr(jsmnexInfo * jExInfo, int ind, char * wStr, int wStrLen)
+{
+  if(jExInfo->token[ind].type != JSMN_STRING) return JSMN_ERROR_TYPE_MISMATCH;
+  return jsmnexWrite(jExInfo, ind, wStr, wStrLen);
 }
 
 int jsmnexWriteInt(jsmnexInfo * jExInfo, int ind, int val)
 {
   char tmpStr[30];
+  if(jExInfo->token[ind].type != JSMN_PRIMITIVE) return JSMN_ERROR_TYPE_MISMATCH;
   memset(tmpStr, 0, 30);
   int tmpStrLen = sprintf(tmpStr, "%d", val);
-  return jsmnexWriteStr(jExInfo, ind, tmpStr, tmpStrLen);
+  return jsmnexWrite(jExInfo, ind, tmpStr, tmpStrLen);
 }
 
 int jsmnexWriteFloat(jsmnexInfo * jExInfo, int ind, float val)
 {
   char tmpStr[30];
+  if(jExInfo->token[ind].type != JSMN_PRIMITIVE) return JSMN_ERROR_TYPE_MISMATCH;
   memset(tmpStr, 0, 30);
   int tmpStrLen = sprintf(tmpStr, "%f", val);
-  return jsmnexWriteStr(jExInfo, ind, tmpStr, tmpStrLen);
+  return jsmnexWrite(jExInfo, ind, tmpStr, tmpStrLen);
 }
 
 
 int jsmnexWriteTrue(jsmnexInfo * jExInfo, int ind)
 {
-  return jsmnexWriteStr(jExInfo, ind, "true", 4);
+  if(jExInfo->token[ind].type != JSMN_PRIMITIVE) return JSMN_ERROR_TYPE_MISMATCH;
+  return jsmnexWrite(jExInfo, ind, "true", 4);
 }
 
 int jsmnexWriteFalse(jsmnexInfo * jExInfo, int ind)
 {
-  return jsmnexWriteStr(jExInfo, ind, "false", 5);
+  if(jExInfo->token[ind].type != JSMN_PRIMITIVE) return JSMN_ERROR_TYPE_MISMATCH;
+  return jsmnexWrite(jExInfo, ind, "false", 5);
 }
 
 int jsmnexWriteNull(jsmnexInfo * jExInfo, int ind)
 {
-  return jsmnexWriteStr(jExInfo, ind, "null", 4);
+  if(jExInfo->token[ind].type != JSMN_PRIMITIVE) return JSMN_ERROR_TYPE_MISMATCH;
+  return jsmnexWrite(jExInfo, ind, "null", 4);
 }
 
 

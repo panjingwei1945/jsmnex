@@ -14,9 +14,7 @@ main()
   printf("%s\n", tmpStr);
 
   // init jsmnex
-  js.jsonStr = tmpStr;
-  jsmnexInit(&js);
-  jsmnexParse(&js);
+  jsmnexInit(&js, tmpStr);
   if (js.tokenNum < 0)
   {
     printf("Failed to parse JSON: %d\n", js.tokenNum);
