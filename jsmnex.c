@@ -3,6 +3,7 @@
 #include "jsmnex.h"
 #include "stdarg.h"
 #include "printf.h"
+#include <string.h>
 
 struct {
   int parent;
@@ -19,9 +20,9 @@ int jsmnexInit(jsmnexInfo * jExInfo, char * jsStr)
   jExInfo->tokenSize = TOKENSIZE;
   jExInfo->jsonStr = jsStr;
   // modify windows UTF-8 file lable. Otherwise the file can not be parsed.
-  if(jsStr[0]=0xEF) jsStr[0]=' ';
-  if(jsStr[1]=0xBB) jsStr[1]=' ';
-  if(jsStr[2]=0xBF) jsStr[2]=' ';
+  if(jsStr[0]==0xEF) jsStr[0]=' ';
+  if(jsStr[1]==0xBB) jsStr[1]=' ';
+  if(jsStr[2]==0xBF) jsStr[2]=' ';
   jExInfo->jsonStrLen = strlen(jExInfo->jsonStr);
   jExInfo->tokenNum = jsmn_parse(&(jExInfo->p), jExInfo->jsonStr, jExInfo->jsonStrLen, jExInfo->token, jExInfo->tokenSize);
   return jExInfo->tokenNum;
@@ -226,7 +227,7 @@ int str2f(char * str, int strLen,float *res)
         break;
     }
   }
-  * res = tmpRes;
+  * res = tmpRes*sign;
   return 0;
 }
 
