@@ -30,10 +30,8 @@ int jsmnexInit(jsmnexInfo * jExInfo, char * jsStr)
 
 /**
   * @brief  use variable arguments to get token index.
-  * @param  str : string pointer contain the json data.
-  * @param  t : token array pointer contain the parsed information.
-  * @param  tNum : Number of t array.
-  * @param  argsNum : Number of variable arguments.
+  * @param  jExinfo : jsminex file info.
+  * @param  format : C string that contains the information which pair with next variable arguments. 
   * @param  ... : variable arguments. only accept string pointer.
   * @retval DRESULT: > 0 indicate the index of t that contain the information of the value looking for. < 0 means something error.
   */
