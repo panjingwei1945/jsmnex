@@ -60,7 +60,7 @@ enum jsmnexSearchMode{
  * Run Find Token by variable argument
  */
 extern int jsmnexInit(jsmnexInfo * jExInfo, char * jsStr);
-extern int jsmnFindToken(jsmnexInfo * jExInfo, const char * format, ...);
+extern int jsmnexFindToken(jsmnexInfo * jExInfo, const char * format, ...);
 extern float jsmnexReadFloat(jsmnexInfo * jExInfo, int tokenInd, int * type);
 extern float jsmnexStr2f(char * str);
 extern int jsmnexWriteStr(jsmnexInfo * jExInfo, int ind, char * wStr, int wStrLen);
